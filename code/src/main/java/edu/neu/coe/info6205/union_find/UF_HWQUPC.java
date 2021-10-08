@@ -8,6 +8,8 @@
 package edu.neu.coe.info6205.union_find;
 
 import java.util.Arrays;
+import java.util.Random;
+import java.util.Scanner;
 
 /**
  * Height-weighted Quick Union with Path Compression
@@ -81,6 +83,12 @@ public class UF_HWQUPC implements UF {
     public int find(int p) {
         validate(p);
         int root = p;
+        while(root!=parent[root]){
+            if(pathCompression){
+                doPathCompression(root);
+            }
+            root = parent[root];
+        }
         // TO BE IMPLEMENTED
         return root;
     }
@@ -169,6 +177,17 @@ public class UF_HWQUPC implements UF {
 
     private void mergeComponents(int i, int j) {
         // TO BE IMPLEMENTED make shorter root point to taller one
+
+        if(height[i]<height[j]){
+            parent[i] = j;
+        }
+        else if(height[j]<height[i]){
+            parent[j] = i;
+        }
+        else{
+            height[i]++;
+            parent[j]=i;
+        }
     }
 
     /**
@@ -176,5 +195,29 @@ public class UF_HWQUPC implements UF {
      */
     private void doPathCompression(int i) {
         // TO BE IMPLEMENTED update parent to value of grandparent
+        parent[i] = parent[parent[i]];
+    }
+
+    public int Count(int n) {
+        int connections = 0;
+        Random rm = new Random(n);
+        while (count != 1) {
+            int node1 = rm.nextInt(n);
+            int node2 = rm.nextInt(n);
+            connect(node1,node2);
+            connections++;
+      }
+        return connections;
+    }
+
+    public static void main(String[] args) {
+       for(int i=100;i<1000000;i*=2){
+           int connections = 0;
+           for (int j = 0; j <10 ; j++) {
+               UF_HWQUPC uf = new UF_HWQUPC(i);
+               connections = connections + uf.Count(i);
+           }
+           System.out.println("N nums "+ i + " Number of connections: " + connections/10);
+       }
     }
 }
